@@ -1,0 +1,805 @@
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Giełda"><meta name="robots" content="noindex"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><title>Dziesiątka metod do przepracowania</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:      #f0f1ed;
+    --surface:    #f8f8f5;
+    --ink:        #15181b;
+    --muted:      #5c646d;
+    --rule:       #d7dad2;
+    --rule-soft:  #e4e6df;
+    --tech:       #1f6f6a;
+    --tech-soft:  #e2ecea;
+    --fund:       #7d6423;
+    --fund-soft:  #efe9dc;
+    --flag:       #a03530;
+    --flag-soft:  #f3e5e3;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #14171a;
+      --surface:   #1b1f23;
+      --ink:       #e8e9e4;
+      --muted:     #9aa2a9;
+      --rule:      #2e343a;
+      --rule-soft: #23282d;
+      --tech:      #6cc0b6;
+      --tech-soft: #1a2b2b;
+      --fund:      #cba95c;
+      --fund-soft: #2a2519;
+      --flag:      #d98079;
+      --flag-soft: #2c1e1e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #14171a;
+    --surface:   #1b1f23;
+    --ink:       #e8e9e4;
+    --muted:     #9aa2a9;
+    --rule:      #2e343a;
+    --rule-soft: #23282d;
+    --tech:      #6cc0b6;
+    --tech-soft: #1a2b2b;
+    --fund:      #cba95c;
+    --fund-soft: #2a2519;
+    --flag:      #d98079;
+    --flag-soft: #2c1e1e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  /* ---------- typografia ---------- */
+
+  h1, h2, h3, .eyebrow, .badge, .chip, th, .meta, .rubryka-nr, .krok-nr {
+    font-family: var(--display);
+  }
+
+  h1 {
+    font-size: clamp(30px, 5.4vw, 44px);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+
+  p { margin: 0; }
+
+  .eyebrow {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .lede {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 62ch;
+  }
+
+  .prose { max-width: 68ch; display: flex; flex-direction: column; gap: 14px; }
+  .prose strong { font-weight: 600; }
+
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+
+  /* ---------- nagłówek ---------- */
+
+  header { display: flex; flex-direction: column; gap: 18px; }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    font-size: 12.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    align-self: flex-start;
+    font-family: var(--display);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 13px 7px 11px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--flag); flex: none; }
+  .status.zamkniete .dot { background: var(--tech); }
+
+  /* ---------- sekcje ---------- */
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+
+  .sec-head { display: flex; flex-direction: column; gap: 6px; border-top: 2px solid var(--ink); padding-top: 12px; }
+
+  /* ---------- dziesiątka ---------- */
+
+  .dyscypliny { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+  @media (max-width: 720px) { .dyscypliny { grid-template-columns: 1fr; } }
+
+  .kolumna { display: flex; flex-direction: column; gap: 0; }
+
+  .kol-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 9px;
+    margin-bottom: 4px;
+    border-bottom: 2px solid currentColor;
+  }
+  .kolumna.fund .kol-head { color: var(--fund); }
+  .kolumna.tech .kol-head { color: var(--tech); }
+
+  .kol-head .tytul { font-family: var(--display); font-weight: 700; font-size: 15px; letter-spacing: -0.005em; }
+  .kol-head .rola { font-family: var(--display); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; }
+
+  .metoda {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 0 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding-top: 3px;
+  }
+  .kolumna.fund .badge { color: var(--fund); }
+  .kolumna.tech .badge { color: var(--tech); }
+
+  .metoda .tresc { display: flex; flex-direction: column; gap: 7px; }
+  .metoda p { font-size: 15px; line-height: 1.5; color: var(--muted); }
+
+  .chip {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.35;
+    padding: 4px 8px;
+    border-radius: 2px;
+  }
+  .kolumna.fund .chip { background: var(--fund-soft); color: var(--fund); }
+  .kolumna.tech .chip { background: var(--tech-soft); color: var(--tech); }
+
+  /* ---------- tabela ---------- */
+
+  .tabela-scroll { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    min-width: 560px;
+  }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 14px 9px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: bottom;
+  }
+  td {
+    padding: 13px 14px 13px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  td:first-child { font-family: var(--display); font-size: 13.5px; font-weight: 600; width: 30%; }
+  tr.wyroznione td { background: var(--surface); }
+  tr.wyroznione td:first-child { color: var(--flag); box-shadow: inset 3px 0 0 var(--flag); padding-left: 11px; }
+  .ciag { font-family: var(--mono); font-size: 12.5px; }
+
+  /* ---------- zastrzeżenia ---------- */
+
+  .zastrzezenie {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--flag);
+    padding: 18px 20px;
+  }
+  .zastrzezenie .etykieta {
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--flag);
+  }
+  .zastrzezenie p { font-size: 15.5px; line-height: 1.55; max-width: 68ch; }
+
+  /* ---------- rubryki ---------- */
+
+  .rubryki { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .rubryki { grid-template-columns: 1fr; } }
+
+  .rubryka {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .rubryka-nr {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rubryka p { font-size: 15px; line-height: 1.55; color: var(--muted); }
+  .rubryka p.wiodace { color: var(--ink); }
+
+  /* ---------- pola: notatka i ocena dowodów ---------- */
+
+  .pola-blok {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 18px 20px;
+  }
+  .pola-blok > p { font-size: 15px; line-height: 1.55; color: var(--muted); max-width: 68ch; }
+
+  ul.pola { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 26px; }
+  @media (max-width: 720px) { ul.pola { grid-template-columns: 1fr; } }
+  ul.pola li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 0 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 14.5px;
+    line-height: 1.45;
+  }
+  ul.pola li > .nr { font-family: var(--mono); font-size: 11.5px; color: var(--tech); padding-top: 2px; }
+  ul.pola.dowody li > .nr { color: var(--fund); }
+  ul.pola li.nowe { position: relative; }
+  ul.pola li.nowe > .nr { color: var(--flag); }
+
+  /* ---------- struktura sesji ---------- */
+
+  ol.kroki { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  ol.kroki li {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 0 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: baseline;
+  }
+  .krok-nr { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  ol.kroki b { font-weight: 600; }
+  ol.kroki span.opis { color: var(--muted); }
+
+  /* ---------- kolejność sesji ---------- */
+
+  .sciezka { display: flex; flex-direction: column; gap: 14px; }
+  .tor { display: flex; flex-direction: column; gap: 8px; }
+  .tor-etykieta { font-family: var(--display); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .tor.fund .tor-etykieta { color: var(--fund); }
+  .tor.tech .tor-etykieta { color: var(--tech); }
+  .kafle { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kafel {
+    font-family: var(--display);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 7px 11px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--surface);
+  }
+  .tor.fund .kafel b { color: var(--fund); font-family: var(--mono); font-size: 11.5px; font-weight: 500; margin-right: 6px; }
+  .tor.tech .kafel b { color: var(--tech); font-family: var(--mono); font-size: 11.5px; font-weight: 500; margin-right: 6px; }
+
+  /* ---------- pytania do przeglądu ---------- */
+
+  ul.pytania { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  ul.pytania li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 0 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 15.5px;
+    line-height: 1.5;
+  }
+  ul.pytania li::before {
+    content: "";
+    width: 13px;
+    height: 13px;
+    border: 1.5px solid var(--muted);
+    border-radius: 2px;
+    margin-top: 5px;
+  }
+
+  /* ---------- stopka ---------- */
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+    font-size: 13.5px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 68ch;
+  }
+
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--tech); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wrap { animation: wejscie 420ms ease-out both; }
+    @keyframes wejscie { from { opacity: 0.6; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Projekt Giełda · warstwa wiedzy · nie dotyczy systemu</p>
+    <h1>Dziesiątka metod do przepracowania</h1>
+    <p class="lede">Uzgodniony zestaw pięciu metod analizy technicznej i pięciu fundamentalnych, do przepracowania w tempie dostosowanym do zrozumienia. Wybór tematów do nauki nie przesądza, które z nich trafią później do systemu.</p>
+    <span class="status zamkniete"><span class="dot" aria-hidden="true"></span>Zamknięty · program nauki i sposób oceniania uzgodnione przez obie strony</span>
+    <div class="meta">
+      <span><b>Data</b> 10 września 2026</span>
+      <span><b>Strony</b> Claude · Codex</span>
+      <span><b>Podstawa</b> dwie niezależne listy 5+5, zestawione</span>
+      <span><b>Status składu</b> zamknięty</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>Uzgodniona dziesiątka</h2>
+      <p class="eyebrow">Wspólny zakres po porównaniu list — opisy po korektach Codexa</p>
+    </div>
+
+    <div class="dyscypliny">
+
+      <div class="kolumna fund">
+        <div class="kol-head">
+          <span class="tytul">Analiza fundamentalna</span>
+          <span class="rola">jak działa firma i ile jest warta</span>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">FA-1</span>
+          <div class="tresc">
+            <h3>Model biznesowy, przewaga i ROIC</h3>
+            <p>Jak firma zarabia, co podtrzymuje jej przewagę i czy zwrot z kapitału przewyższa jego koszt w dłuższym okresie.</p>
+            <span class="chip">ROIC vs koszt kapitału · historia i kontekst branży · marże</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">FA-2</span>
+          <div class="tresc">
+            <h3>Bilans i wypłacalność</h3>
+            <p>Jak odporna jest firma na trudny scenariusz i jakie ma ryzyko problemów z finansowaniem. Ocena bilansu nie gwarantuje przetrwania i nie obejmuje wszystkich źródeł trwałej utraty kapitału.</p>
+            <span class="chip">dług netto/EBITDA · pokrycie odsetek · zapadalność</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">FA-3</span>
+          <div class="tresc">
+            <h3>Jakość zysku i przepływy pieniężne</h3>
+            <p>Czy zysk ze sprawozdania ma pokrycie w gotówce, która faktycznie wpłynęła. Test na to, czy wolno wierzyć liczbom.</p>
+            <span class="chip">CFO / zysk netto · rozliczenia międzyokresowe</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">FA-4</span>
+          <div class="tresc">
+            <h3>Alokacja kapitału i trwałość wypłat</h3>
+            <p>Co zarząd robi z wypracowaną gotówką i czy dywidenda ma z czego być płacona przez kolejne dziesięć lat.</p>
+            <span class="chip">dywidenda/FCF · liczba akcji · cena skupu · przejęcia</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">FA-5</span>
+          <div class="tresc">
+            <h3>Wycena: mnożniki, DCF i odwrócony DCF</h3>
+            <p>Ile płacisz za to, co sprawdziłeś wcześniej — i jakie założenia o przyszłości są już zawarte w dzisiejszej cenie.</p>
+            <span class="chip">FCFF/EV · EV/EBIT · DCF scenariuszowy i odwrócony</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kolumna tech">
+        <div class="kol-head">
+          <span class="tytul">Analiza techniczna</span>
+          <span class="rola">jak zachowuje się cena i jak duże są wahania</span>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">AT-1</span>
+          <div class="tresc">
+            <h3>Trend absolutny</h3>
+            <p>Cena wobec własnej przeszłości. Reguły podążania za trendem reagują na zaobserwowany ruch z opóźnieniem; nie gwarantują wyjścia przed odwróceniem ani uniknięcia dużej straty.</p>
+            <span class="chip">przykłady: SMA 10 mies. lub 40 tyg. · różne warianty pomiaru</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">AT-2</span>
+          <div class="tresc">
+            <h3>Momentum przekrojowe</h3>
+            <p>Ranking spółek według wcześniejszych zwrotów. Jeden z szeroko badanych efektów cenowych; wynik zależy od rynku, konstrukcji strategii i kosztów.</p>
+            <span class="chip">zwrot 12–1 mies. · ranking miesięczny · horyzont: 3–12 mies.</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">AT-3</span>
+          <div class="tresc">
+            <h3>Położenie względem 52-tygodniowego maksimum</h3>
+            <p>Bliskość rocznego szczytu opisuje położenie ceny i jest badana jako sygnał siły. Nie rozstrzyga, czy akcja jest tania lub droga fundamentalnie.</p>
+            <span class="chip">cena / max 52 tyg. · miara relatywna w uniwersum</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">AT-4</span>
+          <div class="tresc">
+            <h3>Zmienność i jej zastosowania</h3>
+            <p>Zmienność wykazuje trwałość i grupowanie w czasie, co pozwala ją modelować. Opisuje skalę wahań i może wspierać dobór wielkości pozycji; nie wskazuje kierunku ani maksymalnej straty.</p>
+            <span class="chip">tygodniowe log-zwroty: odch. std. × √52 · okno zależne od celu</span>
+          </div>
+        </div>
+
+        <div class="metoda">
+          <span class="badge">AT-5</span>
+          <div class="tresc">
+            <h3>Krótkoterminowe odwrócenia</h3>
+            <p>Skłonność do odwracania części niedawnych ruchów w określonych warunkach. Dostarczanie płynności jest jednym z wyjaśnień; spadek wywołany nową informacją nie musi się odwrócić.</p>
+            <span class="chip">zwrot 1 mies. odwrócony · horyzont: dni–tygodnie</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="prose">
+      <p><strong>Pomocniczo, w ramach powyższych tematów:</strong> wsparcia i opory przy AT-1 i AT-5, wolumen przy wybiciach i jako filtr płynności. Pozostają tematami pomocniczymi. Nie zakładamy samodzielnej przewagi prognostycznej; konkretne reguły wymagają odrębnych dowodów.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Trzy porządki, które trzeba rozróżniać</h2>
+      <p class="eyebrow">Zastrzeżenie ① — kolejność nauki nie jest kolejnością stosowania</p>
+    </div>
+
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Kryterium porządkujące</th>
+            <th>Analiza fundamentalna</th>
+            <th>Analiza techniczna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Porządek dydaktyczny<br><span class="mono" style="color:var(--muted)">przyjęty w tym dokumencie</span></td>
+            <td class="ciag">model/ROIC → bilans → jakość zysku → alokacja → wycena</td>
+            <td class="ciag">trend → momentum → 52-tyg. → zmienność → odwrócenia</td>
+          </tr>
+          <tr class="wyroznione">
+            <td>Porządek sita<br><span class="mono">jak to działa w praktyce</span></td>
+            <td>Krótki opis biznesu i branży → wczesna ocena wypłacalności → dalsza analiza zależna od firmy. Obszary oceniamy łącznie.</td>
+            <td>Zastosowanie zależy od celu i horyzontu. Kurs nie ustanawia reguł przesiewu inwestycyjnego.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="zastrzezenie">
+      <span class="etykieta">Zastrzeżenie ①</span>
+      <p><strong>Nie ustanawiamy uniwersalnej kolejności sita.</strong> Krótkie zrozumienie biznesu i branży pozwala właściwie interpretować zadłużenie. Wypłacalność sprawdzamy wcześnie, a jej ocenę łączymy ze stabilnością działalności, jakością gotówki i potrzebami inwestycyjnymi.</p>
+      <p><strong>Argument o jakości biznesu nie unieważnia rozpoznanych problemów z wypłacalnością.</strong> Wymagają one osobnego wyjaśnienia. Ocena wypłacalności również zależy od założeń i jakości danych — chodzi o to, żeby dobra opowieść o firmie nie służyła do pominięcia konkretnego problemu finansowego.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Parametry są punktem wyjścia, nie ustaleniem</h2>
+      <p class="eyebrow">Zastrzeżenie ② — konkretny przykład nie jest regułą systemu</p>
+    </div>
+
+    <div class="prose">
+      <p>Żadna liczba z pierwszych list nie wchodzi automatycznie. <code>SMA 10 mies.</code>, <code>12–1</code>, <code>ROIC &gt; 10%</code>, <code>dług netto/EBITDA &lt; 3</code> — to przykłady z wcześniejszych propozycji. Ich źródło, zastosowanie i ograniczenia sprawdzamy przy danym temacie; nie uznajemy wszystkich progów za zweryfikowane reguły z literatury.</p>
+      <p><strong>Pomiar w ćwiczeniu definiujemy konkretnie:</strong> podajemy wzór, dane, okno i parametry tam, gdzie są potrzebne. Nie wymagamy jednego progu liczbowego dla oceny przewagi konkurencyjnej ani nowej reguły zakupów po każdej lekcji. Można zrozumieć narzędzie i uzasadnić decyzję, że nie chce się go stosować.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Co musi zawierać każde z dziesięciu opracowań</h2>
+      <p class="eyebrow">Zastrzeżenie ③ — nie są to punkty 11 i 12, tylko stałe pola</p>
+    </div>
+
+    <div class="rubryki">
+      <div class="rubryka">
+        <span class="rubryka-nr">Rubryka A</span>
+        <h3>Relacje z innymi metodami i skala czasu</h3>
+        <p class="wiodace">Metody mogą dawać różne wskazania, a część powtarza podobną informację.</p>
+        <p>Momentum i krótkoterminowe odwrócenia opisują tendencje statystyczne zależne od horyzontu i warunków, a nie pewny los pojedynczej akcji. Sprawdzamy, czy rozbieżność wynika z innej skali czasu lub celu. Trend, momentum i bliskość szczytu mogą się pokrywać — nie liczymy ich automatycznie jako niezależnych potwierdzeń.</p>
+      </div>
+
+      <div class="rubryka">
+        <span class="rubryka-nr">Rubryka B</span>
+        <h3>Ograniczenia narzędzia i sprawdzanie konkretnej hipotezy</h3>
+        <p class="wiodace">Bez tego pola każda metoda brzmi przekonująco w trakcie tłumaczenia — bo padają wyłącznie argumenty za.</p>
+        <p>Oddzielamy ograniczenia narzędzia, podważenie konkretnej hipotezy i wynik pojedynczej transakcji. Dla reguł prognostycznych wskazujemy porównanie, próbkę, koszty i wyniki poza okresem dopasowania; nie narzucamy jednej liczby obserwacji wszystkim metodom. Przy analizie bilansu sprawdzamy założenia i pominięte ryzyka — pojedyncze bankructwo nie obala całej dziedziny. Omawiamy też przeżywalność próbki i ryzyko przypadkowych odkryć przy testowaniu wielu wariantów.</p>
+      </div>
+    </div>
+
+    <div class="pola-blok">
+      <h3>Ocena dowodów — osobno przy każdej metodzie</h3>
+      <p>Zamiast jednego rankingu całej dziesiątki każda metoda dostaje własną, jednakowo zbudowaną ocenę. Rozmiar literatury sam w sobie nie rozstrzyga o przewadze konkretnego zastosowania: badanie portfela wielu instrumentów i próba przewidzenia odbicia pojedynczej akcji to dwa różne porównania. Pięć pól, zawsze tych samych, żeby dziesięć ocen dało się ze sobą zestawić.</p>
+      <ul class="pola dowody">
+        <li><span class="nr">01</span><span><strong>Co zbadano</strong> — jakie dokładnie pytanie postawiono w badaniach</span></li>
+        <li><span class="nr">02</span><span><strong>Na jakich instrumentach i w jakim okresie</strong></span></li>
+        <li><span class="nr">03</span><span><strong>Czy wynik utrzymał się poza okresem dopasowania</strong></span></li>
+        <li><span class="nr">04</span><span><strong>Czy utrzymał się po kosztach</strong> — prowizje, spread, podatek</span></li>
+        <li><span class="nr">05</span><span><strong>Czy efekt przetrwał publikację</strong> — wyniki po upublicznieniu reguły, z uwzględnieniem dostępności danych.</span></li>
+      </ul>
+      <p><strong>Codex zaakceptował piąte pole 10.09.2026.</strong> Dopuszczamy „brak wystarczających danych” i „nie dotyczy bezpośrednio”. Brak badań po publikacji nie dowodzi nieskuteczności. Zmiana warunków rynkowych może zmienić wyniki tej samej reguły.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Przebieg nauki jednego tematu</h2>
+      <p class="eyebrow">Jedna metoda · jeden dokument · tyle sesji, ile potrzeba</p>
+    </div>
+    <ol class="kroki">
+      <li><span class="krok-nr">01</span><span><b>Intuicja</b> — <span class="opis">jakie pytanie rozwiązujemy; prosty język i wyjaśnienie nowych pojęć.</span></span></li>
+      <li><span class="krok-nr">02</span><span><b>Przykład prowadzony</b> — <span class="opis">wspólnie czytamy wykres lub liczby. Wyjaśniamy mechanizm, wzór, źródła danych i parametry; odróżniamy możliwe wyjaśnienie od potwierdzonego faktu.</span></span></li>
+      <li><span class="krok-nr">03</span><span><b>Samodzielna próba Krzyśka</b> — <span class="opis">drugi przykład do własnej interpretacji, zanim pokazujemy rozwiązanie.</span></span></li>
+      <li><span class="krok-nr">04</span><span><b>Omówienie rozumowania</b> — <span class="opis">co zostało trafnie odczytane, co wymaga poprawy; kontrprzykład lub pułapka.</span></span></li>
+      <li><span class="krok-nr">05</span><span><b>Dowody i ograniczenia</b> — <span class="opis">źródła, zakres badań, horyzont i założenia. Obowiązkowo rubryki A i B, dostosowane do tematu.</span></span></li>
+      <li><span class="krok-nr">06</span><span><b>Notatka własnymi słowami</b> — <span class="opis">sześć pól poniżej, plus przepracowany przykład i własny wniosek Krzyśka.</span></span></li>
+    </ol>
+
+    <div class="pola-blok">
+      <h3>Sześć pól notatki</h3>
+      <p>Przebieg sesji jest ćwiczeniem, notatka jest tym, co po niej zostaje. Stała struktura, żeby dziesięć notatek dało się czytać obok siebie.</p>
+      <ul class="pola">
+        <li><span class="nr">01</span><span><strong>Czym jest metoda</strong> i na jakie pytanie odpowiada</span></li>
+        <li><span class="nr">02</span><span><strong>Dlaczego miałaby działać</strong> — z rozróżnieniem faktów i możliwych wyjaśnień</span></li>
+        <li><span class="nr">03</span><span><strong>Jak ją stosować</strong> — dane, definicje i parametry przykładu</span></li>
+        <li><span class="nr">04</span><span><strong>Dowody i ich ograniczenia</strong> — pięć pól oceny dowodów</span></li>
+        <li><span class="nr">05</span><span><strong>Horyzont</strong> oraz powiązania z innymi metodami</span></li>
+        <li><span class="nr">06</span><span><strong>Kiedy może zawieść</strong> i jak sprawdzać konkretną hipotezę</span></li>
+      </ul>
+      <p>Do notatki dołączamy przepracowany przykład i wniosek Krzyśka. <strong>Nie ma obowiązku „obalania metody"</strong> — jest obowiązek nazwania, czego z niej nie wolno wywnioskować.</p>
+    </div>
+    <div class="zastrzezenie">
+      <span class="etykieta">Tempo i sprawdzenie zrozumienia</span>
+      <p><strong>Jedna metoda może wymagać kilku sesji.</strong> Temat kończymy, gdy Krzysiek potrafi wyjaśnić go własnymi słowami i zinterpretować nowy przykład, wskazując również, czego nie wolno z niego wywnioskować. W razie trudności wracamy do przykładu lub pojęcia. Nie ma obowiązku przyjęcia metody do systemu inwestycyjnego.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Kolejność sesji — blokami, nie na przemian</h2>
+      <p class="eyebrow">Najpierw całe fundamenty, potem cała technika</p>
+    </div>
+
+    <div class="sciezka">
+      <div class="tor fund">
+        <span class="tor-etykieta">Blok pierwszy · jak działa firma i ile jest warta</span>
+        <div class="kafle">
+          <span class="kafel"><b>FA-1</b>model i ROIC</span>
+          <span class="kafel"><b>FA-2</b>bilans</span>
+          <span class="kafel"><b>FA-3</b>jakość zysku</span>
+          <span class="kafel"><b>FA-4</b>alokacja kapitału</span>
+          <span class="kafel"><b>FA-5</b>wycena</span>
+        </div>
+      </div>
+      <div class="tor tech">
+        <span class="tor-etykieta">Blok drugi · jak zachowuje się cena i jak duże są wahania</span>
+        <div class="kafle">
+          <span class="kafel"><b>AT-1</b>trend absolutny</span>
+          <span class="kafel"><b>AT-2</b>momentum</span>
+          <span class="kafel"><b>AT-3</b>52-tyg. maksimum</span>
+          <span class="kafel"><b>AT-4</b>zmienność</span>
+          <span class="kafel"><b>AT-5</b>odwrócenia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p><strong>Najpierw fundamenty, potem technika</strong> — kolejność uzgodniona przez obie strony. Pozwala najpierw poznać biznes, jego finanse i wycenę, a potem zachowanie ceny. Nie twierdzimy, że przeplatanie tematów zawsze szkodzi, ani nie ustanawiamy obowiązkowej kolejności inwestowania.</p>
+    </div>
+  </section>
+
+  <section id="porownanie-spolek">
+    <div class="sec-head">
+      <h2>Nauka na posiadanych spółkach i porównanie ocen</h2>
+      <p class="eyebrow">10.09.2026 · życzenia Krzyśka i propozycja wykonania Codexa</p>
+    </div>
+    <div class="prose">
+      <p><strong>Ustalenie Krzyśka:</strong> nauka rozpocznie się w osobnej rozmowie, na spółkach już posiadanych. Wyniki mają być zapisywane w czytelnym HTML i umożliwiać wizualne porównanie firm. Doprecyzowanie Krzyśka: oceny 1–10 dotyczą wyłącznie pięciu obszarów fundamentalnych; technikę analizujemy osobno, bez punktacji.</p>
+      <p>Według zapisu portfela z 03.09.2026 punktem startowym są <strong>Colgate-Palmolive (CL), Consolidated Edison (ED), UPS i Wendy’s (WEN)</strong>. To lista do ćwiczeń, nie potwierdzenie stanu rachunku na dziś. Przed analizą sprawdzamy aktualność listy i danych; dawnych zasad portfela nie przenosimy do kursu.</p>
+      <p><strong>Proponowany przebieg:</strong> przechodzimy tematami FA-1–FA-5, następnie AT-1–AT-5. Przy każdym temacie jeden przykład prowadzony na posiadanej spółce, drugi do samodzielnej interpretacji, następnie uzupełnienie pozostałych firm. Roboczo zaczynamy od CL. W miarę nauki powstaje jedna wspólna tabela, zamiast czterech nieporównywalnych analiz.</p>
+    </div>
+
+    <div class="zastrzezenie">
+      <span class="etykieta">Punkt ① · spółka porównawcza — brzmienie Codexa po przeglądzie</span>
+      <p><strong>Zaczynamy od posiadanych spółek.</strong> Własna pozycja może sprzyjać uzasadnianiu wcześniejszego wyboru. Przykład spoza portfela pomaga poszerzyć perspektywę; oceniamy go według tych samych zasad i wspólnej daty odniesienia.</p>
+      <p><strong>Przy przepracowywaniu każdej metody dodajemy jeden przykład spółki spoza portfela</strong>, dobranej do tematu i branży według kryterium określonego przed oceną. Nie dokładamy nowej firmy do każdej krótkiej sesji. Lepsze wyniki posiadanych spółek mogą skłonić do ponownego sprawdzenia ocen, ale same nie dowodzą stronniczości ani błędu kryteriów.</p>
+      <p><strong>Jeden przypadek nazwany wprost: WEN.</strong> Wisi nad nim nierozstrzygnięta sprawa cięcia dywidendy, więc ocena FA-4 tej spółki zapadnie w cieniu decyzji, której jeszcze nie podjęto. Kryteria dla FA-4 ustalamy przed spojrzeniem na tę firmę, a samą ocenę wykonujemy jako ostatnią z czterech.</p>
+    </div>
+    <div class="sec-head"><h3>Fundamenty 1–10 i technika bez punktów</h3></div>
+    <div class="prose">
+      <p><strong>Propozycja Codexa:</strong> ocena jest poglądowym skrótem jawnego kryterium, a nie prawdopodobieństwem zysku ani rekomendacją zakupu. Każda ocena ma uzasadnienie, dane źródłowe, datę, horyzont i oznaczenie pewności danych. Oceny zaokrąglamy do liczb całkowitych.</p>
+      <p>W fundamentach 1–2 oznacza ocenę bardzo słabą, 3–4 słabą, 5–6 mieszaną, 7–8 dobrą, 9–10 bardzo dobrą w danym obszarze. Szczegółowe kryteria ustalamy przed ocenieniem firm przy odpowiedniej lekcji, z uwzględnieniem branży. Nie dobieramy progów do wyniku ulubionej spółki.</p>
+      <p><strong>Brak danych = „brak oceny”, nigdy 1 ani 5.</strong> „Nie dotyczy” wymaga uzasadnienia. Brak dywidendy sam w sobie nie daje słabej oceny alokacji kapitału. Przy porównaniach używamy wspólnej daty odniesienia i tych samych zasad; historia danych i różnice branżowe pozostają widoczne.</p>
+      <p><strong>Punkt ③ · rozdzielczość skali — stanowisko Codexa.</strong> Zgodnie z wyborem Krzyśka zostają <strong>oceny 1–10 i suma /50</strong>. Powyższe przedziały są opisem ogólnym. Przy odpowiedniej lekcji, przed pierwszym ocenianiem, ustalamy kryteria odróżniające sąsiednie stopnie i zapisujemy uzasadnienie każdej oceny. Nie zmieniamy skali na /25. Jeśli dane nie pozwalają obronić różnicy, nie wymuszamy odmiennej punktacji ani kolejności firm. Drobne różnice sum nadal nie są dowodem realnej przewagi. <strong>Wynika stąd wprost, że oceny równe są dopuszczalne i normalne</strong> — dwie firmy mogą dostać w danym obszarze tę samą liczbę i nie jest to unik ani brak rozstrzygnięcia.</p>
+    </div>
+    <div class="tabela-scroll"><table>
+      <thead><tr><th>Obszar</th><th>Co oceniamy lub opisujemy</th><th>Interpretacja</th></tr></thead>
+      <tbody>
+        <tr><td>FA-1 · biznes / ROIC</td><td>Trwałość przewagi i jakość rentowności kapitału</td><td>Mocniej uzasadniona jakość biznesu</td></tr>
+        <tr><td>FA-2 · bilans</td><td>Odporność finansowa w rozpatrywanym scenariuszu</td><td>Silniejsza zdolność finansowania i obsługi zobowiązań</td></tr>
+        <tr><td>FA-3 · zyski / gotówka</td><td>Powtarzalność, konwersja na gotówkę i jakość raportowania</td><td>Większe zaufanie do trwałości wyników</td></tr>
+        <tr><td>FA-4 · alokacja</td><td>Wykorzystanie kapitału, reinwestycje i trwałość wypłat</td><td>Lepiej uzasadnione decyzje o kapitale</td></tr>
+        <tr><td>FA-5 · wycena</td><td>Atrakcyjność ceny przy jawnych scenariuszach</td><td>Większy margines wobec oszacowanej wartości; zależny od założeń</td></tr>
+        <tr><td>AT-1 · trend</td><td>Kierunek i struktura w ustalonym oknie — bez punktów</td><td>Opis trendu, nie ocena jakości firmy</td></tr>
+        <tr><td>AT-2 · momentum</td><td>Pozycja w rankingu porównawczego uniwersum — bez punktów 1–10</td><td>Zwroty względne i miejsce w rankingu</td></tr>
+        <tr><td>AT-3 · maksimum</td><td>Odległość od szczytu według wspólnej definicji — bez punktów</td><td>Wartość procentowa, bez wniosku o wycenie fundamentalnej</td></tr>
+        <tr><td>AT-4 · zmienność</td><td>Natężenie wahań — bez punktów</td><td>Zmienność w jednostkach miary z podaniem okna</td></tr>
+        <tr><td>AT-5 · odwrócenia</td><td>Konkretny badany scenariusz odbicia — bez punktów</td><td>Opis przesłanek i ograniczeń; bez gwarancji odbicia</td></tr>
+      </tbody>
+    </table></div>
+    <div class="zastrzezenie">
+      <span class="etykieta">Sumowanie — ograniczenie interpretacji</span>
+      <p><strong>Nie tworzymy sumy wszystkich dziesięciu ocen ani wyniku /100.</strong> Część miar technicznych powiela informację, a wysoka zmienność nie znaczy „dobrze”. Silny wykres nie powinien kompensować słabego bilansu.</p>
+      <p>Dla pełnych pięciu ocen fundamentalnych, jeśli nie zachodzi opisane niżej wyłączenie z rankingu, pokazujemy <strong>pomocniczą sumę /50 i średnią /10</strong>, z równymi wagami jako jawną konwencją, nie wynikiem optymalizacji. Przy brakującej ocenie nie tworzymy porównywalnego wyniku zbiorczego. Suma nie zastępuje pięciu ocen: poważne problemy finansowe lub wiarygodności pokazujemy osobno, niezależnie od średniej.</p>
+      <p><strong>Punkt ② · kiedy nie pokazujemy sumy — brzmienie Codexa, przyjęte.</strong> Przy rozpoznanym poważnym problemie z wypłacalnością pozostawiamy pięć ocen i ich uzasadnienia, ale zamiast sumy /50, średniej i zbiorczego podglądu /40 pokazujemy <strong>„Poza rankingiem: wymaga wyjaśnienia”</strong> oraz opis problemu. Firma pozostaje w tabeli i materiale do nauki, poza sortowaniem według wyniku zbiorczego. Nie ustalamy teraz automatu „FA-2 poniżej X”. Konkretne przesłanki nadania i zdjęcia statusu określimy podczas lekcji FA-2, przed ocenianiem firm. To ograniczenie porównania, nie automatyczna decyzja o sprzedaży.</p>
+      <p><strong>Domknięcie Claude’a:</strong> ten sam status wyzwala także <strong>poważny problem z wiarygodnością liczb</strong>, nie tylko z wypłacalnością. Akapit wyżej traktuje obie kategorie jako równie ciężkie, a jeśli sprawozdaniu nie można ufać, suma /50 jest bezwartościowa dokładnie tak samo — to jest sens obszaru FA-3. Przesłanki dla tej drugiej ścieżki ustalamy przy lekcji FA-3, na tych samych zasadach.</p>
+      <p><strong>Technikę pokazujemy bez punktacji 1–10 jako pięć osobnych opisów i pomiarów</strong> z horyzontem i kierunkiem skali, bez wspólnej średniej. Ranking momentum obliczamy względem jawnego, szerszego uniwersum; porównanie samych czterech posiadanych firm nie zastępuje tego rankingu.</p>
+    </div>
+    <div class="sec-head"><h3>Docelowy dokument HTML</h3></div>
+    <div class="prose">
+      <p><strong>Główna tabela przesiewu:</strong> firmy w wierszach, pięć ocen FA w kolumnach i suma /50. Każda ocena ma liczbę, pasek i odnośnik do danych oraz uzasadnienia. Tabelę można sortować po sumie lub pojedynczym obszarze. Kolor jest dodatkiem do tekstu. Na start CL, ED, UPS i WEN; później kolejne firmy.</p>
+      <p><strong>Bez dodatkowych wag na początku.</strong> Suma oznacza równe wagi po 20% — jest prostą konwencją edukacyjną, nie dowodem optymalności. Kryteria ustalamy przed ocenianiem firm. Ewentualny przyszły wariant wag musi mieć jawny cel i wersję, aby nie zmieniać go pod oczekiwaną kolejność spółek.</p>
+      <p><strong>Dwa odczyty tych samych ocen:</strong> FA-1–FA-4 opisują jakość fundamentalną firmy (pomocniczy podgląd /40), a FA-5 atrakcyjność ceny przy dacie i scenariuszach analizy (/10). Razem dają /50, o ile firma nie jest wyłączona z rankingu. Podgląd /40 nie dodaje nowych ocen ani wag; pozwala odróżnić lepszą firmę od lepiej wycenionej inwestycji. Wyższa suma nie musi oznaczać lepszego biznesu.</p>
+      <p>Przy każdej firmie pokazujemy datę analizy, kompletność i pewność danych oraz osobno poważne problemy z wypłacalnością lub wiarygodnością. Poważny problem z wypłacalnością lub wiarygodnością liczb uruchamia status opisany w punkcie ② zamiast wyników zbiorczych. Przy brakach danych nie nadajemy pełnego wyniku /50. Drobne różnice punktowe nie dowodzą realnej przewagi; suma służy ustaleniu kolejności dalszego przeglądu, nie automatycznemu zakupowi.</p>
+      <p><strong>Osobna część techniczna:</strong> pięć opisów i pomiarów, bez ocen punktowych i bez łączenia z wynikiem fundamentalnym. Do czasu wykonania analizy wszystkie pola pozostają nieocenione. Nie wpisujemy przykładowych ocen jako rzeczywistych wyników.</p>
+      <p><strong>Status rozszerzenia:</strong> nauka na posiadanych spółkach i czytelny zapis HTML wynikają z polecenia Krzyśka. Krzysiek zaakceptował ograniczenie punktacji do fundamentów i wskazał preferencję prostej sumy /50 na potrzeby wstępnego przesiewu. Codex rekomenduje pozostanie przy tej wersji bez dodatkowych wag. Podgląd jakości /40 i wyceny /10 jest propozycją prezentacji Codexa. Claude zaakceptował podstawę rozszerzenia i przedstawił trzy dopiski. Codex zaproponował powyższe brzmienia punktów ①–③, a Claude je zaakceptował. Codex po końcowym odczycie 10.09.2026 zaakceptował również trzy ostatnie dopiski Claude’a: WEN na końcu oceny FA-4, wyłączenie z rankingu przy poważnym problemie z wiarygodnością liczb oraz dopuszczenie równych ocen. Program nauki i rozszerzenie o oceny są zamknięte.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Przebieg uzgodnienia — 10.09.2026</h2>
+      <p class="eyebrow">Pięć tur: listy niezależne → konsensus → przegląd Codexa → dopiski Claude’a → domknięcie</p>
+    </div>
+    <div class="prose">
+      <p><strong>Zamknięte zgodą obu stron:</strong> skład dziesiątki i kolejność bloków · korekty kategorycznych opisów metod · <code>FCFF/EV</code> zamiast <code>FCF/EV</code> · rezygnacja ze sztywnego sita przy zachowaniu wczesnej oceny wypłacalności · rozdzielenie w rubryce B ograniczeń narzędzia, obalenia hipotezy i wyniku pojedynczej transakcji · nakładanie się sygnałów w rubryce A · pętla nauki z samodzielną próbą Krzyśka · sześć pól notatki · etykiety kolumn · usunięcie wiersza „siła dowodów" z tabeli i zastąpienie go oceną przy każdej metodzie.</p>
+      <p><strong>Kto co skorygował.</strong> Codex poprawił po stronie Claude’a: niedopasowanie licznika do mianownika w <code>FCF/EV</code>, kategoryczne sformułowania o trendzie, zmienności i odwróceniach, sztywność sita, wymóg progu liczbowego po każdej lekcji oraz nieścisły opis historii uzgodnienia list w stopce. Claude po stronie Codexa: pusty wiersz „siła dowodów", etykiety kolumn bez treści i brak struktury notatki w kroku 06.</p>
+    </div>
+    <ul class="pytania">
+      <li><span><strong>Program nauki domknięty:</strong> Claude i Codex zaakceptowali zakres oraz sposób nauki, w tym piąte pole oceny dowodów. Krzysiek potwierdził osiągnięcie konsensusu.</span></li>
+      <li><span><strong>Rozszerzenie o oceny — zamknięte:</strong> ① jeden przykład porównawczy spoza portfela na metodę, dobrany branżowo, bez uznawania jego słabszego wyniku za dowód stronniczości; ② status „Poza rankingiem: wymaga wyjaśnienia” zamiast wyników zbiorczych, z przesłankami określanymi przy lekcji; ③ skala 1–10 i suma /50 zgodnie z wyborem Krzyśka, z kryteriami sąsiednich stopni ustalanymi przed ocenianiem. <strong>Codex: TAK. Claude: TAK.</strong></span></li>
+      <li><span><strong>Trzy domknięcia Claude’a po ostatniej turze, poza sporem:</strong> nazwanie przypadku WEN przy ① · rozszerzenie wyzwalacza statusu o poważny problem z wiarygodnością liczb, bo akapit obok traktuje obie kategorie jako równie ciężkie · wprost dopuszczone oceny równe przy ③. Codex zaakceptował te trzy dopiski po końcowym odczycie 10.09.2026. Dokument jest zamknięty. Przesłanki wyłączenia z rankingu ustalamy przy FA-2 i FA-3; kryteria stopni dla każdego obszaru — przy odpowiedniej lekcji, przed ocenianiem firm.</span></li>
+    </ul>
+  </section>
+
+
+  <section id="przeglad-metod">
+    <div class="sec-head">
+      <h2>Aktualność metod i przyszłe zmiany</h2>
+      <p class="eyebrow">10.09.2026 · propozycja Codexa zaakceptowana przez Krzyśka</p>
+    </div>
+    <div class="prose">
+      <p><strong>Zamknięcie programu oznacza przyjęcie jego obecnej wersji, nie zakaz zmian.</strong> Dziesiątka jest uzasadnionym wyborem tematów do nauki, a nie dowodem, że te metody zawsze będą najlepsze. Nowy dowód może uzasadnić zmianę narzędzia, jego zastosowania lub sposobu oceniania.</p>
+      <p><strong>Przegląd metod wykonujemy raz w roku</strong>, a wcześniej, gdy pojawi się istotny nowy dowód podważający założenia lub wspierający inne podejście. Roczny rytm jest decyzją organizacyjną, nie naukowo wyznaczonym optymalnym terminem. Sprawdzamy nowe badania, niezależne powtórzenia, wyniki po publikacji i zastrzeżenia do dotychczasowych zastosowań. Sam słaby kwartał ani przekonujący materiał promocyjny nie wystarczają do zmiany metody.</p>
+    </div>
+    <div class="tabela-scroll"><table>
+      <thead><tr><th>Zadanie nowej metody</th><th>Co znaczy „lepsza”</th></tr></thead>
+      <tbody>
+        <tr><td>Problemy finansowe</td><td>Wcześniejsze i trafniejsze rozpoznanie problemów, z uwzględnieniem fałszywych alarmów.</td></tr>
+        <tr><td>Wycena</td><td>Użyteczniejsze oszacowania i lepsze pokazanie niepewności; kryterium oceny określone przed porównaniem.</td></tr>
+        <tr><td>Selekcja inwestycji</td><td>Lepsze wyniki wybranych portfeli po kosztach, przy porównywalnym ryzyku, horyzoncie i zasadach rozliczania podatków.</td></tr>
+        <tr><td>Praca analityczna</td><td>Podobna lub lepsza jakość analizy przy mniejszym nakładzie czasu i złożoności.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="prose">
+      <p><strong>Najpierw próba porównawcza.</strong> Kandydat nie zmienia od razu podstawowej punktacji. Z góry zapisujemy, jakie zadanie wykonuje, z czym go porównujemy i co uznamy za poprawę. Stosujemy te same firmy, daty i informacje dostępne w ocenianym momencie. W porównaniach historycznych pilnujemy danych niedostępnych wówczas, przeżywalności próbki i wyników poza okresem dopasowania.</p>
+      <p>Sprawdzamy odpowiednie badania oraz praktyczne przykłady. Kilka naszych spółek pozwala ocenić zrozumiałość i użyteczność narzędzia, ale nie dowodzi przewagi inwestycyjnej. Liczba obserwacji i długość próby zależą od pytania; rok obserwacji nie musi wystarczyć do rozstrzygnięcia.</p>
+      <p><strong>Kluczowe pytanie: co kandydat wnosi ponad dotychczasową analizę?</strong> Inna nazwa lub wzór mogą powtarzać tę samą informację. Poprawa jednego zadania nie oznacza przewagi we wszystkich pozostałych.</p>
+    </div>
+    <ol class="kroki">
+      <li><span class="krok-nr">01</span><span><b>Zastępuje</b> — wykonuje to samo zadanie wyraźnie lepiej.</span></li>
+      <li><span class="krok-nr">02</span><span><b>Uzupełnia</b> — odpowiada na dotychczas pomijane pytanie i uzasadnia dodatkową pracę.</span></li>
+      <li><span class="krok-nr">03</span><span><b>Zostaje w obserwacji</b> — jest obiecujący, ale dowody są niewystarczające.</span></li>
+      <li><span class="krok-nr">04</span><span><b>Odpada</b> — nie wnosi wystarczającej wartości wobec kosztu i złożoności.</span></li>
+    </ol>
+    <div class="prose">
+      <p><strong>Wersjonowanie:</strong> każda ocena firmy ma datę i wersję kryteriów, np. „FA v1”. Po zmianie kryteriów zachowujemy stare wyniki oraz zapis: co zmieniono, dlaczego i na jakiej podstawie. Aktualny ranking przeliczamy według jednej wersji; nie mieszamy wyników nadanych różnymi zasadami.</p>
+      <p><strong>Przegląd metod i aktualizacja firm to dwa różne działania.</strong> Nowy raport lub istotne wydarzenie może wymagać aktualizacji oceny firmy, mimo że metoda pozostaje właściwa. Coroczny przegląd metod nie ogranicza częstotliwości aktualizacji danych i ocen spółek.</p>
+      <p><strong>Status:</strong> Krzysiek zaakceptował tę propozycję Codexa i polecił dopisać ją do dokumentu. Nie przypisujemy Claude’owi osobnej akceptacji tego późniejszego uzupełnienia. Zapis określa sposób przyszłej pracy; nie uruchamia automatycznego monitorowania ani przypomnień.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Ślad rozbieżności.</strong> W pierwszych listach technicznych wspólne były trzy obszary: trend, momentum i zmienność. Po porównaniu argumentów Codex przyjął roczne maksimum i krótkoterminowe odwrócenia w miejsce osobnych tematów o strefach i wolumenie; te pozostały pomocnicze. W fundamentach od początku wspólne było pięć obszarów. Zgodność dotyczy zakresu tematów, nie automatycznie każdego opisu, parametru lub uzasadnienia.</p>
+    <p>Dokument ustala <strong>program nauki</strong> oraz — od rozszerzenia z 10.09 — <strong>sposób oceniania spółek na potrzeby tej nauki</strong>. Nie jest ustaleniem systemu inwestycyjnego, nie zawiera rekomendacji i nie przesądza, które z dziesięciu metod zostaną kiedykolwiek zastosowane. Punktacja służy porównywaniu i ustalaniu kolejności przeglądu, nigdy decyzji o zakupie.</p>
+  </footer>
+
+</div>
+<nav id="hq-nav" style="position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:9999;display:flex;gap:8px"><a href="javascript:history.back()" style="background:#20372e;color:#fff;border-radius:22px;padding:10px 15px;text-decoration:none;font:600 16px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.25)">‹ Wstecz</a><a href="index.html" style="background:#226449;color:#fff;border-radius:22px;padding:10px 15px;text-decoration:none;font:600 16px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.25)">Start</a></nav>
